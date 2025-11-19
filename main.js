@@ -75,14 +75,23 @@ scene.add(originSphere);
 
 // Function to add vector to scene
 function addVectorToScene(vector3D, text, color) {
+    // Check visualization mode
+    const vizMode = document.querySelector('input[name="viz-mode"]:checked').value;
+    const isScatter = vizMode === 'scatter';
+
     const direction = new THREE.Vector3(vector3D.x, vector3D.y, vector3D.z);
     const length = direction.length();
     const normalizedDir = direction.clone().normalize();
 
+    // Determine start point
+    // If scatter, always start at origin (0,0,0)
+    // If walk, start at the current cumulative point
+    const startPoint = isScatter ? new THREE.Vector3(0, 0, 0) : currentPoint;
+
     // Create arrow
     const arrow = new THREE.ArrowHelper(
         normalizedDir,
-        currentPoint,
+        startPoint,
         length,
         color,
         length * 0.2,
@@ -90,10 +99,10 @@ function addVectorToScene(vector3D, text, color) {
     );
     scene.add(arrow);
 
-    // Calculate next point
-    const nextPoint = currentPoint.clone().add(direction);
+    // Calculate end point (where the sphere/label goes)
+    const endPoint = startPoint.clone().add(direction);
 
-    // Create sphere at current point
+    // Create sphere at end point
     const sphere = new THREE.Mesh(
         new THREE.SphereGeometry(0.12, 16, 16),
         new THREE.MeshStandardMaterial({
@@ -102,7 +111,7 @@ function addVectorToScene(vector3D, text, color) {
             emissiveIntensity: 0.2
         })
     );
-    sphere.position.copy(currentPoint);
+    sphere.position.copy(endPoint);
     scene.add(sphere);
 
     // Create text label
@@ -113,40 +122,47 @@ function addVectorToScene(vector3D, text, color) {
     div.style.borderLeft = '3px solid';
 
     const label = new CSS2DObject(div);
-    label.position.copy(currentPoint);
+    label.position.copy(endPoint);
     label.position.y += 0.3; // Offset slightly above the point
     scene.add(label);
 
-    // Update path
-    pathPoints.push(nextPoint.clone());
-    updatePathLine();
+    // Only update path/currentPoint if in Walk mode
+    if (!isScatter) {
+        // Update path
+        pathPoints.push(endPoint.clone());
+        updatePathLine();
 
-    // Update current point
-    currentPoint = nextPoint;
+        // Update current point
+        currentPoint = endPoint;
 
-    // Add final sphere
-    if (scene.getObjectByName('finalSphere')) {
-        scene.remove(scene.getObjectByName('finalSphere'));
+        // Add/Move final sphere
+        if (scene.getObjectByName('finalSphere')) {
+            scene.remove(scene.getObjectByName('finalSphere'));
+        }
+        const finalSphere = new THREE.Mesh(
+            new THREE.SphereGeometry(0.15, 16, 16),
+            new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                emissive: 0xffffff,
+                emissiveIntensity: 0.3
+            })
+        );
+        finalSphere.name = 'finalSphere';
+        finalSphere.position.copy(currentPoint);
+        scene.add(finalSphere);
     }
-    const finalSphere = new THREE.Mesh(
-        new THREE.SphereGeometry(0.15, 16, 16),
-        new THREE.MeshStandardMaterial({
-            color: 0xffffff,
-            emissive: 0xffffff,
-            emissiveIntensity: 0.3
-        })
-    );
-    finalSphere.name = 'finalSphere';
-    finalSphere.position.copy(currentPoint);
-    scene.add(finalSphere);
 
-    // Optionally adjust camera to follow the path
-    const centerPoint = new THREE.Vector3();
-    pathPoints.forEach(p => centerPoint.add(p));
-    centerPoint.divideScalar(pathPoints.length);
-
-    // Smooth camera transition
-    controls.target.lerp(centerPoint, 0.1);
+    // Focus camera
+    if (isScatter) {
+        // Look at origin
+        controls.target.set(0, 0, 0);
+    } else {
+        // Follow the path
+        const centerPoint = new THREE.Vector3();
+        pathPoints.forEach(p => centerPoint.add(p));
+        centerPoint.divideScalar(pathPoints.length);
+        controls.target.lerp(centerPoint, 0.1);
+    }
 }
 
 // Function to update path line

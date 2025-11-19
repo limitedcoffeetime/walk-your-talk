@@ -154,6 +154,24 @@
         <div id="conversation-history"></div>
         <div id="input-area">
             <div class="method-toggle">
+                <div style="font-weight: 600; margin-bottom: 2px;">Visualization Mode:</div>
+                <label class="toggle-row">
+                    <input type="radio" name="viz-mode" value="walk" checked>
+                    <div>
+                        <strong>Walk</strong> (Path)
+                        <div style="font-size: 11px; color: #ccc;">Connects vectors sequentially</div>
+                    </div>
+                </label>
+                <label class="toggle-row">
+                    <input type="radio" name="viz-mode" value="scatter">
+                    <div>
+                        <strong>Scatter</strong> (Origin)
+                        <div style="font-size: 11px; color: #ccc;">All vectors start from center</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="method-toggle">
                 <div style="font-weight: 600; margin-bottom: 2px;">Mapping Method:</div>
                 <label class="toggle-row">
                     <input type="radio" name="method" value="projection" checked>

@@ -8,6 +8,7 @@
     "server": "node server.js",
     "client": "vite",
     "build": "vite build",
+    "vercel-build": "vite build",
     "preview": "vite preview",
     "embedding": "node embedding.js"
   },
