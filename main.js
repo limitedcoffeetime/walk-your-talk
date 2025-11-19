@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 
 // Scene setup
 const scene = new THREE.Scene();
@@ -12,7 +13,7 @@ const camera = new THREE.PerspectiveCamera(
     0.1,
     1000
 );
-camera.position.set(5, 5, 5);
+camera.position.set(10, 10, 10); // Zoom out a bit more for the larger scale
 camera.lookAt(0, 0, 0);
 
 // Renderer setup
@@ -20,6 +21,14 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
+
+// Label Renderer setup
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(window.innerWidth, window.innerHeight);
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0px';
+labelRenderer.domElement.style.pointerEvents = 'none';
+document.body.appendChild(labelRenderer.domElement);
 
 // Controls setup
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -95,6 +104,18 @@ function addVectorToScene(vector3D, text, color) {
     );
     sphere.position.copy(currentPoint);
     scene.add(sphere);
+
+    // Create text label
+    const div = document.createElement('div');
+    div.className = 'label';
+    div.textContent = text;
+    div.style.borderColor = '#' + color.toString(16).padStart(6, '0');
+    div.style.borderLeft = '3px solid';
+
+    const label = new CSS2DObject(div);
+    label.position.copy(currentPoint);
+    label.position.y += 0.3; // Offset slightly above the point
+    scene.add(label);
 
     // Update path
     pathPoints.push(nextPoint.clone());
@@ -173,13 +194,13 @@ function updateHistoryUI() {
 }
 
 // Function to call backend API
-async function getEmbedding(text) {
+async function getEmbedding(text, method) {
     const response = await fetch('http://localhost:3000/api/embed', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ text, method })
     });
 
     if (!response.ok) {
@@ -193,6 +214,9 @@ async function getEmbedding(text) {
 async function handleSubmit() {
     const text = textInput.value.trim();
 
+    // Get selected method
+    const method = document.querySelector('input[name="method"]:checked').value;
+
     if (!text) {
         statusDiv.textContent = 'Please enter some text';
         return;
@@ -204,7 +228,7 @@ async function handleSubmit() {
     statusDiv.textContent = 'Getting embedding...';
 
     try {
-        const result = await getEmbedding(text);
+        const result = await getEmbedding(text, method);
 
         // Add to conversation
         const color = colors[conversationHistory.length % colors.length];
@@ -216,7 +240,7 @@ async function handleSubmit() {
         // Update UI
         updateHistoryUI();
         textInput.value = '';
-        statusDiv.textContent = `Vector added! (${result.embeddingDimensions}D → 3D)`;
+        statusDiv.textContent = `Vector added! (${result.method})`;
 
         // Clear status after 3 seconds
         setTimeout(() => {
@@ -251,6 +275,7 @@ window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.setSize(window.innerWidth, window.innerHeight);
 });
 
 // Animation loop
@@ -258,6 +283,7 @@ function animate() {
     requestAnimationFrame(animate);
     controls.update();
     renderer.render(scene, camera);
+    labelRenderer.render(scene, camera);
 }
 
 animate();

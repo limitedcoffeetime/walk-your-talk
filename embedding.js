@@ -16,7 +16,7 @@ const rl = readline.createInterface({
 async function getEmbedding(text) {
   try {
     const embedding = await openai.embeddings.create({
-      model: "text-embedding-3-small",
+      model: "text-embedding-3-large",
       input: text,
       encoding_format: "float",
     });

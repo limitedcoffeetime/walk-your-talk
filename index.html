@@ -50,6 +50,24 @@
             flex-direction: column;
             gap: 10px;
         }
+        .method-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .toggle-row input {
+            margin: 0;
+        }
         #text-input {
             width: 100%;
             padding: 12px;
@@ -96,6 +114,20 @@
             font-size: 13px;
             max-width: 250px;
         }
+        .label {
+            color: #FFF;
+            font-family: sans-serif;
+            padding: 2px;
+            background: rgba(0, 0, 0, 0.6);
+            font-size: 12px;
+            border-radius: 4px;
+            pointer-events: none;
+            white-space: nowrap;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 10px;
+        }
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -121,6 +153,23 @@
         <h1>TextWalk</h1>
         <div id="conversation-history"></div>
         <div id="input-area">
+            <div class="method-toggle">
+                <div style="font-weight: 600; margin-bottom: 2px;">Mapping Method:</div>
+                <label class="toggle-row">
+                    <input type="radio" name="method" value="projection" checked>
+                    <div>
+                        <strong>Random Projection</strong> (Math-Heavy)
+                        <div style="font-size: 11px; color: #ccc;">Preserves relative distances</div>
+                    </div>
+                </label>
+                <label class="toggle-row">
+                    <input type="radio" name="method" value="simple">
+                    <div>
+                        <strong>Simple Averaging</strong> (Legacy)
+                        <div style="font-size: 11px; color: #ccc;">Chunks vector into x, y, z</div>
+                    </div>
+                </label>
+            </div>
             <textarea id="text-input" placeholder="Type your message here..."></textarea>
             <button id="submit-btn">Add to Path</button>
             <div id="status"></div>
