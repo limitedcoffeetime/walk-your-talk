@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TextWalk - 3D Conversation Path</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        canvas {
+            display: block;
+        }
+        #ui-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            margin: 0 0 15px 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        #conversation-history {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        .message {
+            margin-bottom: 8px;
+            padding: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            border-left: 3px solid;
+        }
+        #input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        #text-input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 60px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        #submit-btn {
+            padding: 12px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #submit-btn:hover:not(:disabled) {
+            background: #45a049;
+        }
+        #submit-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        #status {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 5px;
+            min-height: 16px;
+        }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            max-width: 250px;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        🎮 Mouse: Rotate | Scroll: Zoom | Right-drag: Pan
+        <br><br>
+        ⌨️ Enter to submit | Shift+Enter for new line
+        <br><br>
+        Type messages to trace your conversation through semantic space!
+    </div>
+
+    <div id="ui-container">
+        <h1>TextWalk</h1>
+        <div id="conversation-history"></div>
+        <div id="input-area">
+            <textarea id="text-input" placeholder="Type your message here..."></textarea>
+            <button id="submit-btn">Add to Path</button>
+            <div id="status"></div>
+        </div>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+</body>
+</html>
