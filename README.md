@@ -5,7 +5,7 @@ Visualize your conversation as a path through 3D semantic space! Each message yo
 ## What It Does
 
 - Type text messages
-- Each message gets converted to a 1536-dimensional embedding vector
+- Each message gets converted to a 3072-dimensional embedding vector
 - The embedding is reduced to 3D coordinates
 - A vector arrow is drawn from the current position in that direction
 - Watch your conversation trace a path through semantic space!
@@ -99,4 +99,4 @@ Try typing messages on different topics and watch how the conversation moves thr
 - "The weather is beautiful today"
 - "I'm going for a walk"
 
-Notice how similar topics create vectors in similar directions!
+Notice how similar topics create vectors in similar directions!!
